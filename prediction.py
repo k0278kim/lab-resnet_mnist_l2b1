@@ -47,7 +47,7 @@ total = 0
 
 # 🚨 after this: TEST_CODE
 
-n_dat = 1000
+n_dat = 100
 with torch.no_grad():
     pbar = tqdm(test_loader, total=n_dat, desc="Testing")
     idx = 0

@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <gmp.h>
+#include "rlwe_sife.c"
 
 #define GETLENGTH(array) (int)(sizeof(array)/sizeof(*(array)))
 #define FOREACH(i,count) for (int i = 0; i < (int)count; ++i)
@@ -42,6 +44,8 @@
 	static const char SIFE_SCALE_M_str[]="1526385735302993058007";// floor(q/p)
 	static const uint64_t SIFE_SCALE_M_MOD_Q_I[SIFE_NMODULI]={13798054, 441557681, 1912932552};	//*
 #endif
+
+uint32_t msk[SIFE_L][SIFE_NMODULI][SIFE_N];
 
 int* polynomial(int* terms, double number) {
     double temp = number * UNKNOWN;
@@ -215,6 +219,9 @@ float* convolution(float* image, int* imageSize, float* filter, int* filterSize,
 }
 
 float* convolution1x1(float* image, int* imageSize, float* filter, int* filterSize, int stride) {
+	uint32_t sk_y[TERMS][2][SIFE_NMODULI][SIFE_N];
+	mpz_t dy[SIFE_N];
+	double term[TERMS*TERMS][4] = {0};
 
 	int inputBatch = imageSize[0];
 	int inputChannel = imageSize[1];
@@ -251,6 +258,19 @@ float* convolution1x1(float* image, int* imageSize, float* filter, int* filterSi
 						slicedImage[slicePointer++] = reverse_polynomial(polyInput);
 						slicedFilter[ich] = reverse_polynomial(polyFilter);
 					}
+
+					for (int i = 0; i < TERMS * 2; i++){
+						if (i < TERMS) {
+							rlwe_sife_keygen(polyFilter[i], msk, sk_y[i][0]);
+						} else {
+							rlwe_sife_keygen(polyFilter[i], msk, sk_y[i][1]);
+						}
+					}
+
+					for(int k=0;k<SIFE_N;k++){
+						mpz_init(dy[k]);
+					}
+
 					// slicedFilter: 1x1 filter의 채널을 뭉친 것. shape: (1, filterLength)
 					// 함수 암호 메서드 여기서 호출하기. (slicedImage, slicedFilter 적용 완료)
 					// outputPoint는 한 픽셀 위치에서의 여러 채널을 뭉쳐서 내적한 결과.
