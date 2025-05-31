@@ -32,9 +32,9 @@ static const char SIFE_Q_str[] = "76687145727357674227351553";
 #define SIFE_NMODULI 3
 static const uint64_t SIFE_CRT_CONSTS[SIFE_NMODULI]={0, 206923011, 2935204199007202395};	//*
 static const uint32_t SIFE_MOD_Q_I[SIFE_NMODULI] = {16760833, 2147352577, 2130706433};//*
-#define SIFE_B_x 4
+#define SIFE_B_x 16
 #define SIFE_B_y 16
-#define SIFE_L 785
+#define SIFE_L 100
 #define SIFE_N 4096
 #define SIFE_SIGMA 1
 #define SIFE_P (SIFE_B*SIFE_B*SIFE_L + 1)

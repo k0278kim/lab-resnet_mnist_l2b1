@@ -107,7 +107,7 @@ class Bottleneck(nn.Module):
     def __init__(self, inplanes, planes, stride=1, downsample=None, use_custom_conv=False):
         super(Bottleneck, self).__init__()
 
-        print("use_custom_conv: ", use_custom_conv)
+        # print("use_custom_conv: ", use_custom_conv)
         # ✅ use_custom_conv가 추가됨. (skip connection일지 아닐지.)
         if use_custom_conv:
             self.conv1 = CustomConv2D(inplanes, planes, kernel_size=1, stride=stride, bias=False)   # 1x1 conv
